@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import Script from "next/script";
 
 export default function Home() {
+    const [tg, setTg] = useState<TelegramWebApp | null>();
+    const [name, setName] = useState("Deploy now");
     useEffect(() => {
-        const tg = window.Telegram?.WebApp;
+        const data = window.Telegram?.WebApp;
 
-        if (tg) {
-            tg.ready();
+        if (data) {
+            data.ready();
+            setTg(data);
 
-            tg.sendData("opened");
+            data.sendData("opened");
         }
     }, []);
+
+    const handleClick = () => {
+        if (tg) {
+            tg.sendData("opened");
+            setName("opened");
+        }
+    };
     return (
         <div className={styles.page}>
             <Script
@@ -38,12 +48,7 @@ export default function Home() {
                 </ol>
 
                 <div className={styles.ctas}>
-                    <a
-                        className={styles.primary}
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <button className={styles.primary} onClick={handleClick}>
                         <Image
                             className={styles.logo}
                             src="/vercel.svg"
@@ -51,8 +56,8 @@ export default function Home() {
                             width={20}
                             height={20}
                         />
-                        Deploy now
-                    </a>
+                        {name}
+                    </button>
                     <a
                         href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
                         target="_blank"
