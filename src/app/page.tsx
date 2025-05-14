@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
+import Script from "next/script";
 
 export default function Home() {
     useEffect(() => {
@@ -16,6 +17,10 @@ export default function Home() {
     }, []);
     return (
         <div className={styles.page}>
+            <Script
+                src="https://telegram.org/js/telegram-web-app.js"
+                strategy="beforeInteractive"
+            />
             <main className={styles.main}>
                 <Image
                     className={styles.logo}
