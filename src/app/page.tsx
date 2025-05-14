@@ -3,19 +3,23 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import Script from "next/script";
 
 export default function Home() {
     const [tg, setTg] = useState<TelegramWebApp | null>();
     const [name, setName] = useState("Deploy now");
     useEffect(() => {
-        const data = window.Telegram?.WebApp;
-
-        if (data) {
-            data.ready();
-            setTg(data);
-
-            data.sendData("opened");
+        if (typeof window !== "undefined") {
+            const script = document.createElement("script");
+            script.src = "https://telegram.org/js/telegram-web-app.js";
+            script.async = true;
+            script.onload = () => {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                tg.sendData("opened");
+                setTg(tg);
+            };
+            document.body.appendChild(script);
         }
     }, []);
 
@@ -27,10 +31,6 @@ export default function Home() {
     };
     return (
         <div className={styles.page}>
-            <Script
-                src="https://telegram.org/js/telegram-web-app.js"
-                strategy="beforeInteractive"
-            />
             <main className={styles.main}>
                 <Image
                     className={styles.logo}
