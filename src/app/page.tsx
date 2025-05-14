@@ -19,6 +19,8 @@ export default function Home() {
                 tg.expand();
                 tg.sendData("opened");
                 setTg(tg);
+                //@ts-expect-error user err
+                setName(tg.initDataUnsafe?.user?.first_name);
             };
             document.body.appendChild(script);
         }
