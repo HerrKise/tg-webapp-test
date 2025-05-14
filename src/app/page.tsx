@@ -13,6 +13,7 @@ export default function Home() {
             script.src = "https://telegram.org/js/telegram-web-app.js";
             script.async = true;
             script.onload = () => {
+                //@ts-expect-error tg err
                 const tg = Telegram.WebApp;
                 tg.ready();
                 tg.expand();
