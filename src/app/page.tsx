@@ -14,7 +14,7 @@ export default function Home() {
             script.async = true;
             script.onload = () => {
                 //@ts-expect-error tg err
-                const tg = Telegram.WebApp;
+                const tg = window.Telegram.WebApp;
                 tg.ready();
                 tg.expand();
                 tg.sendData("opened");
