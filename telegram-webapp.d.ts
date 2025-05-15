@@ -8,6 +8,8 @@ declare global {
         close: () => void;
         ready: () => void;
         expand: () => void;
+        onEvent: (event: string, fn: () => void) => void;
+        offEvent: (event: string, fn: () => void) => void;
         viewportHeight?: number;
         colorScheme?: "light" | "dark";
     }

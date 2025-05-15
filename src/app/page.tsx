@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useTelegramCloseTracker } from "../../hooks/useTelegramCloseTracker";
 
 export default function Home() {
-    const [tg, setTg] = useState<TelegramWebApp | null>();
+    /* const [tg, setTg] = useState<TelegramWebApp | null>(); */
     const [name, setName] = useState("Deploy now");
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -17,8 +18,6 @@ export default function Home() {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
                 tg.expand();
-                tg.sendData("opened");
-                setTg(tg);
                 //@ts-expect-error user err
                 setName(tg.initDataUnsafe?.user?.first_name);
             };
@@ -26,12 +25,7 @@ export default function Home() {
         }
     }, []);
 
-    const handleClick = () => {
-        if (tg) {
-            tg.sendData("opened");
-            setName("opened");
-        }
-    };
+    useTelegramCloseTracker();
     return (
         <div className={styles.page}>
             <main className={styles.main}>
@@ -51,7 +45,7 @@ export default function Home() {
                 </ol>
 
                 <div className={styles.ctas}>
-                    <button className={styles.primary} onClick={handleClick}>
+                    <button className={styles.primary}>
                         <Image
                             className={styles.logo}
                             src="/vercel.svg"
