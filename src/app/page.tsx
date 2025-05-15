@@ -6,23 +6,42 @@ import styles from "./page.module.css";
 import { useTelegramCloseTracker } from "../../hooks/useTelegramCloseTracker";
 
 export default function Home() {
-    /* const [tg, setTg] = useState<TelegramWebApp | null>(); */
+    const [tg, setTg] = useState<TelegramWebApp | null>();
     const [name, setName] = useState("Deploy now");
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const script = document.createElement("script");
-            script.src = "https://telegram.org/js/telegram-web-app.js";
-            script.async = true;
-            script.onload = () => {
-                //@ts-expect-error tg err
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                //@ts-expect-error user err
-                setName(tg.initDataUnsafe?.user?.first_name);
+        if (window == undefined) return;
+        const script = document.createElement("script");
+        script.src = "https://telegram.org/js/telegram-web-app.js";
+        script.async = true;
+        script.onload = () => {
+            //@ts-expect-error tg err
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            setTg(tg);
+            //@ts-expect-error user err
+            setName(tg.initDataUnsafe?.user?.first_name);
+            const sendClosed = () => {
+                tg.sendData("closed");
             };
-            document.body.appendChild(script);
-        }
+
+            tg.onEvent("deactivated", sendClosed);
+
+            const handleViewport = () => {
+                if ((tg.viewportHeight ?? 1000) < 100) {
+                    sendClosed();
+                }
+            };
+            tg.onEvent("viewportChanged", handleViewport);
+        };
+        document.body.appendChild(script);
+
+        return () => {
+            if (tg) {
+                tg.offEvent("deactivated", tg.sendData("closed"));
+                tg.offEvent("viewportChanged", tg.sendData("closed"));
+            }
+        };
     }, []);
 
     useTelegramCloseTracker();
